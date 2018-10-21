@@ -5,11 +5,12 @@
     <title>Title</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="https://unpkg.com/v-tooltip"></script>
+    <script src="https://unpkg.com/v-copy@0.1.0/dist/v-copy.min.js"></script>
 </head>
 <body>
 <div id="app" v-cloak>
     <h3>Users (total: {{totalItems}}):
-        <button v-on:click="buttonClick">{{btnLabel}}</button>
+        <button v-on:click="buttonClick" v-tooltip="btnTooltip">{{btnLabel}}</button>
     </h3>
     <table v-show="tVisible">
         <tr>
@@ -25,48 +26,58 @@
                 <span v-else-if="key=='avatar'">
                     <img v-bind:src="value?value:defaultAvatar" height="64"/></span>
                 <span v-else>
-                    {{value}}
+                    {{value | fUpper}}
                 </span>
+            </td>
+            <td>
+                <button v-copy="item.firstName + ' ' + item.middleName + ' ' +  item.lastName">Copy!</button>
             </td>
         </tr>
     </table>
 </div>
 <script>
-    Vue.directive('tooltip', VTooltip.VTooltip)
+
+    Vue.filter('fUpper', function (value) {
+        if (!value) return ''
+        value = value.toString()
+        return value.charAt(0).toUpperCase() + value.slice(1)
+    });
+
     new Vue({
         el: '#app',
         data: function () {
             return {
                 tVisible: true,
                 btnLabel: "Скрыть",
+                btnTooltip: "Скрыть таблицу",
                 defaultAvatar: "images/no-user-photo-64.png",
                 users: [
                     {
                         id: "u1",
-                        firstName: "Иван",
-                        middleName: "Иванович",
-                        lastName: "Иванов",
+                        firstName: "иван",
+                        middleName: "иванович",
+                        lastName: "иванов",
                         avatar: "images/vue.js-logo.png"
                     },
                     {
                         id: "u2",
-                        firstName: "Петр",
-                        middleName: "Петрович",
-                        lastName: "Петров",
+                        firstName: "петр",
+                        middleName: "петрович",
+                        lastName: "петров",
                         avatar: null
                     },
                     {
                         id: "u3",
-                        firstName: "Сергей",
-                        middleName: "Сергеевич",
-                        lastName: "Сидоров",
+                        firstName: "сергей",
+                        middleName: "сергеевич",
+                        lastName: "сидоров",
                         avatar: "images/vue.js-logo.png"
                     },
                     {
                         id: "u4",
-                        firstName: "Алексей",
-                        middleName: "Алексеевич",
-                        lastName: "Алексеев",
+                        firstName: "алексей",
+                        middleName: "алексеевич",
+                        lastName: "алексеев",
                         avatar: "images/vue.js-logo.png"
                     },
                     {
@@ -88,6 +99,7 @@
             buttonClick: function () {
                 this.tVisible = !this.tVisible;
                 this.btnLabel = this.tVisible ? "Скрыть" : "Показать";
+                this.btnTooltip = this.tVisible ? "Скрыть таблицу" : "Показать таблицу";
             }
         }
     })
