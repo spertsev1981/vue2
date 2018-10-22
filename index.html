@@ -10,9 +10,10 @@
 <body>
 <div id="app" v-cloak>
     <h3>Users (total: {{totalItems}}):
-        <button v-on:click="buttonClick" v-tooltip="btnTooltip">{{btnLabel}}</button>
+        <button v-on:click.prevent="showHideTable" v-tooltip="btnTooltip" type="button">{{btnLabel}}</button>
     </h3>
-    <table v-show="tVisible">
+    <template v-if="tableVisible">
+    <table>
         <tr>
             <th v-for="label in ['№', 'Имя','Отчество','Фамилия','Аватара']">
                 {{label}}
@@ -34,22 +35,14 @@
             </td>
         </tr>
     </table>
+    </template>
 </div>
 <script>
-
-    Vue.filter('fUpper', function (value) {
-        if (!value) return ''
-        value = value.toString()
-        return value.charAt(0).toUpperCase() + value.slice(1)
-    });
-
     new Vue({
         el: '#app',
         data: function () {
             return {
-                tVisible: true,
-                btnLabel: "Скрыть",
-                btnTooltip: "Скрыть таблицу",
+                tableVisible: true,
                 defaultAvatar: "images/no-user-photo-64.png",
                 users: [
                     {
@@ -82,9 +75,9 @@
                     },
                     {
                         id: "u5",
-                        firstName: "Александр",
-                        middleName: "Александрович",
-                        lastName: "Александров",
+                        firstName: "александр",
+                        middleName: "александрович",
+                        lastName: "александров",
                         avatar: null
                     }
                 ]
@@ -93,13 +86,24 @@
         computed: {
             totalItems: function () {
                 return this.users.length;
+            },
+            btnLabel: function () {
+                return this.tableVisible ? "Скрыть" : "Показать";
+            },
+            btnTooltip: function () {
+                return this.tableVisible ? "Скрыть таблицу" : "Показать таблицу";
             }
         },
+        created: function () {
+            Vue.filter('fUpper', function (value) {
+                if (!value) return ''
+                value = value.toString()
+                return value.charAt(0).toUpperCase() + value.slice(1)
+            });
+        },
         methods: {
-            buttonClick: function () {
-                this.tVisible = !this.tVisible;
-                this.btnLabel = this.tVisible ? "Скрыть" : "Показать";
-                this.btnTooltip = this.tVisible ? "Скрыть таблицу" : "Показать таблицу";
+            showHideTable: function () {
+                this.tableVisible = !this.tableVisible;
             }
         }
     })
